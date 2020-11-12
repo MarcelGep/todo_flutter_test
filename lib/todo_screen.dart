@@ -43,6 +43,10 @@ class _ToDoScreenState extends State<ToDoScreen> {
   Future<void> connectToFirebase() async {
     print('Connect to database with user id: ' + user.uid);
     database = DatabaseService(user.uid);
+    if (!(await database.checkIfUserExist())) {
+      database.setTodo('Erstes ToDo Item', false);
+      print('Neuer User wurde angelegt: ' + user.uid);
+    }
   }
 
   /*Future<void> connectToFirebase() async {
@@ -79,15 +83,13 @@ class _ToDoScreenState extends State<ToDoScreen> {
           builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());
-            }
-            else {
+            } else {
               return StreamBuilder<DocumentSnapshot>(
                   stream: database.getTodos(),
                   builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
                     if (!snapshot.hasData) {
                       return Center(child: CircularProgressIndicator());
-                    }
-                    else {
+                    } else {
                       Map<String, dynamic> items = snapshot.data.data();
                       return ListView.builder(
                           itemCount: items.length,
@@ -96,8 +98,8 @@ class _ToDoScreenState extends State<ToDoScreen> {
                             return ToDoItem(
                               key,
                               items[key],
-                                  () => deleteItem(key),
-                                  () => toggleDone(key, items[key]),
+                              () => deleteItem(key),
+                              () => toggleDone(key, items[key]),
                             );
                           });
                     }
