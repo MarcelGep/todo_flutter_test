@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:todo_flutter_test/authentication_service.dart';
 import 'add_item_dialog.dart';
 import 'database.dart';
 import 'todo_item.dart';
@@ -18,6 +19,8 @@ class _ToDoScreenState extends State<ToDoScreen> {
   User user;
   DatabaseService database;
   _ToDoScreenState(this.user);
+  AuthenticationService authenticationService =
+      new AuthenticationService(FirebaseAuth.instance);
 
   void addItem(String key) {
     database.setTodo(key, false);
@@ -91,17 +94,29 @@ class _ToDoScreenState extends State<ToDoScreen> {
                       return Center(child: CircularProgressIndicator());
                     } else {
                       Map<String, dynamic> items = snapshot.data.data();
-                      return ListView.builder(
-                          itemCount: items.length,
-                          itemBuilder: (context, i) {
-                            String key = items.keys.elementAt(i);
-                            return ToDoItem(
-                              key,
-                              items[key],
-                              () => deleteItem(key),
-                              () => toggleDone(key, items[key]),
-                            );
-                          });
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Expanded(
+                            child: ListView.builder(
+                                itemCount: items.length,
+                                itemBuilder: (context, i) {
+                                  String key = items.keys.elementAt(i);
+                                  return ToDoItem(
+                                    key,
+                                    items[key],
+                                    () => deleteItem(key),
+                                    () => toggleDone(key, items[key]),
+                                  );
+                                }),
+                          ),
+                          RaisedButton(
+                            onPressed: authenticationService.signOut,
+                            child: Text("Sign out"),
+                          ),
+                        ],
+                      );
                     }
                   });
             }
