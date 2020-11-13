@@ -5,11 +5,12 @@ class DatabaseService {
   DatabaseService(this.userID);
 
   final CollectionReference userTodos =
-  FirebaseFirestore.instance.collection('userTodos');
+      FirebaseFirestore.instance.collection('userTodos');
 
   Future setTodo(String item, bool value) async {
-    return await userTodos.doc(userID).set(
-        {item: value}, SetOptions(merge: true));
+    return await userTodos
+        .doc(userID)
+        .set({item: value}, SetOptions(merge: true));
   }
 
   Future deleteTodo(String key) async {

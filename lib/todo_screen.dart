@@ -1,26 +1,20 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:todo_flutter_test/authentication_service.dart';
+import 'package:provider/provider.dart';
+import 'authentication_service.dart';
 import 'add_item_dialog.dart';
 import 'database.dart';
 import 'todo_item.dart';
 
 class ToDoScreen extends StatefulWidget {
-  final User user;
-  ToDoScreen(this.user);
-
   @override
-  _ToDoScreenState createState() => _ToDoScreenState(user);
+  _ToDoScreenState createState() => _ToDoScreenState();
 }
 
 class _ToDoScreenState extends State<ToDoScreen> {
-  User user;
+  User currentUser;
   DatabaseService database;
-  _ToDoScreenState(this.user);
-  AuthenticationService authenticationService =
-      new AuthenticationService(FirebaseAuth.instance);
 
   void addItem(String key) {
     database.setTodo(key, false);
@@ -44,38 +38,17 @@ class _ToDoScreenState extends State<ToDoScreen> {
   }
 
   Future<void> connectToFirebase() async {
-    print('Connect to database with user id: ' + user.uid);
-    database = DatabaseService(user.uid);
+    print('Connect to database with user id: ' + currentUser.uid);
+    database = DatabaseService(currentUser.uid);
     if (!(await database.checkIfUserExist())) {
       database.setTodo('Erstes ToDo Item', false);
-      print('Neuer User wurde angelegt: ' + user.uid);
+      print('Neuer User wurde angelegt: ' + currentUser.uid);
     }
-  }
-
-  /*Future<void> connectToFirebase() async {
-    await Firebase.initializeApp();
-    final FirebaseAuth authenticate = FirebaseAuth.instance;
-    UserCredential credential = await authenticate.signInWithEmailAndPassword(
-        email: null, password: null);
-    user = credential.user;
-
-    database = DatabaseService(user.uid);
-
-    if (!(await database.checkIfUserExist())) {
-      database.setTodo('ToDo anlegen', false);
-      print('Neuer User wurde angelegt: ' + user.uid);
-    } else {
-      print('Eingeloggt als: ' + user.uid);
-    }
-  }*/
-
-  @override
-  void initState() {
-    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    currentUser = context.watch<User>();
     return Scaffold(
       appBar: AppBar(
         title: Text('ToDo Flutter'),
@@ -112,7 +85,8 @@ class _ToDoScreenState extends State<ToDoScreen> {
                                 }),
                           ),
                           RaisedButton(
-                            onPressed: authenticationService.signOut,
+                            onPressed:
+                                context.watch<AuthenticationService>().signOut,
                             child: Text("Sign out"),
                           ),
                         ],
