@@ -15,6 +15,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
   void save() {
     if (formKey.currentState.validate()) {
       widget.addItem(item);
+      Navigator.pop(context);
     }
   }
 
@@ -40,18 +41,19 @@ class _AddItemDialogState extends State<AddItemDialog> {
                 onPressed: save,
                 color: Color.fromRGBO(23, 152, 185, 100),
                 child: Text(
-                  'Save',
+                  'Speichern',
+                  style: TextStyle(color: Colors.white),
+                )),
+            RaisedButton(
+                onPressed: () => Navigator.pop(context),
+                color: Color.fromRGBO(23, 152, 185, 100),
+                child: Text(
+                  'Abbrechen',
                   style: TextStyle(color: Colors.white),
                 ))
           ],
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    print('I was removed');
-    super.dispose();
   }
 }

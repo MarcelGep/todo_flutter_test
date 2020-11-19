@@ -12,33 +12,37 @@ class ToDoItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 22),
-        child: ListTile(
-            contentPadding: EdgeInsets.symmetric(vertical: 8.0),
-            leading: Checkbox(
-              value: done,
-              onChanged: (bool value) => toggleDone(),
-            ),
-            title: Text(
-              title,
-              style: TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.w600,
-                color:
-                    done ? Color.fromRGBO(23, 152, 185, 100) : Colors.black54,
-                decoration:
-                    done ? TextDecoration.lineThrough : TextDecoration.none,
-              ),
-            ),
-            trailing: IconButton(
-              icon: Icon(Icons.delete_outline),
-              onPressed: () => remove(),
-            ),
-            onTap: () {
-              Navigator.push<Widget>(
-                  context,
-                  MaterialPageRoute<Widget>(
-                      builder: (BuildContext context) =>
-                          DetailScreen(title, done)));
-            }));
+        child: Card(
+            color: Colors.blue[200],
+            elevation: 2,
+            child: ListTile(
+                contentPadding: EdgeInsets.symmetric(vertical: 8.0),
+                leading: Checkbox(
+                  value: done,
+                  onChanged: (bool value) => toggleDone(),
+                ),
+                title: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.w600,
+                    color: done
+                        ? Color.fromRGBO(23, 152, 185, 100)
+                        : Colors.black54,
+                    decoration:
+                        done ? TextDecoration.lineThrough : TextDecoration.none,
+                  ),
+                ),
+                trailing: IconButton(
+                  icon: Icon(Icons.delete_outline),
+                  onPressed: () => remove(),
+                ),
+                onTap: () {
+                  Navigator.push<Widget>(
+                      context,
+                      MaterialPageRoute<Widget>(
+                          builder: (BuildContext context) =>
+                              DetailScreen(title, done)));
+                })));
   }
 }

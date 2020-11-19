@@ -7,6 +7,9 @@ class DatabaseService {
   final CollectionReference userTodos =
       FirebaseFirestore.instance.collection('userTodos');
 
+  Query query =
+      FirebaseFirestore.instance.collection('userTodos').orderBy("idNumber");
+
   Future setTodo(String item, bool value) async {
     return await userTodos
         .doc(userID)
@@ -28,6 +31,7 @@ class DatabaseService {
   }
 
   Stream getTodos() {
+    print(query);
     return userTodos.doc(userID).snapshots();
   }
 }

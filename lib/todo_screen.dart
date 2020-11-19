@@ -16,9 +16,10 @@ class _ToDoScreenState extends State<ToDoScreen> {
   User currentUser;
   DatabaseService database;
 
+  void sortItems() {}
+
   void addItem(String key) {
     database.setTodo(key, false);
-    Navigator.pop(context);
   }
 
   void deleteItem(String key) {
@@ -88,6 +89,10 @@ class _ToDoScreenState extends State<ToDoScreen> {
                             onPressed:
                                 context.watch<AuthenticationService>().signOut,
                             child: Text("Sign out"),
+                          ),
+                          RaisedButton(
+                            onPressed: sortItems,
+                            child: Text("Sortieren"),
                           ),
                         ],
                       );
