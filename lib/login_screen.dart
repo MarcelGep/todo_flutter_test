@@ -16,9 +16,9 @@ class LoginScreen extends StatelessWidget {
       onSignup: context.watch<AuthenticationService>().signUp,
       onRecoverPassword: context.watch<AuthenticationService>().recoverPassword,
       onSubmitAnimationCompleted: () {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => ToDoScreen(),
-        ));
+        // Navigator.of(context).pushReplacement(MaterialPageRoute(
+        //   builder: (context) => ToDoScreen(),
+        // ));
       },
     );
   }

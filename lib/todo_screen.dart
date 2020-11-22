@@ -2,18 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_flutter_test/login_screen2.dart';
 import 'authentication_service.dart';
 import 'add_item_dialog.dart';
 import 'database.dart';
 import 'todo_item.dart';
 
 class ToDoScreen extends StatefulWidget {
+  final User user;
+  const ToDoScreen({Key key, this.user}) : super(key: key);
+
   @override
-  _ToDoScreenState createState() => _ToDoScreenState();
+  _ToDoScreenState createState() {
+    return _ToDoScreenState();
+  }
 }
 
 class _ToDoScreenState extends State<ToDoScreen> {
-  User currentUser;
+  Future myFuture;
   DatabaseService database;
 
   void sortItems() {}
@@ -38,25 +44,30 @@ class _ToDoScreenState extends State<ToDoScreen> {
     database.setTodo(key, !value);
   }
 
-  Future<void> connectToFirebase() async {
-    print('Connect to database with user id: ' + currentUser.uid);
-    database = DatabaseService(currentUser.uid);
+  Future<void> _connectToFirebase() async {
+    print('Connect to database with user id: ' + widget.user.uid);
+    database = DatabaseService(widget.user.uid);
     if (!(await database.checkIfUserExist())) {
       database.setTodo('Erstes ToDo Item', false);
-      print('Neuer User wurde angelegt: ' + currentUser.uid);
+      print('Neuer User wurde angelegt: ' + widget.user.uid);
     }
   }
 
   @override
+  void initState() {
+    myFuture = _connectToFirebase();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    currentUser = context.watch<User>();
     return Scaffold(
       appBar: AppBar(
         title: Text('ToDo Flutter'),
         backgroundColor: Color.fromRGBO(35, 152, 185, 100),
       ),
       body: FutureBuilder(
-          future: connectToFirebase(),
+          future: myFuture,
           builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());
@@ -86,8 +97,12 @@ class _ToDoScreenState extends State<ToDoScreen> {
                                 }),
                           ),
                           RaisedButton(
-                            onPressed:
-                                context.watch<AuthenticationService>().signOut,
+                            onPressed: () {
+                              context.read<AuthenticationService>().signOut();
+                              Navigator.pushReplacement(context, MaterialPageRoute(
+                                builder: (context) => LoginPage(),
+                              ));
+                            },
                             child: Text("Sign out"),
                           ),
                           RaisedButton(

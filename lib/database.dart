@@ -31,7 +31,6 @@ class DatabaseService {
   }
 
   Stream getTodos() {
-    print(query);
     return userTodos.doc(userID).snapshots();
   }
 }
