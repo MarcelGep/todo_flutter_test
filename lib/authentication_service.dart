@@ -10,6 +10,15 @@ class AuthenticationService {
   AuthenticationService(this._firebaseAuth);
 
   Stream<User> get authStateChanges {
+    _firebaseAuth.authStateChanges().listen((User user) {
+      if (user == null) {
+        print('No user is signed in!');
+      } else {
+        String email = user.email;
+        print('User $email is signed in!');
+      }
+    }
+    );
     return _firebaseAuth.authStateChanges();
   }
 
