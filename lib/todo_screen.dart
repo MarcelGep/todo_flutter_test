@@ -9,8 +9,8 @@ import 'database.dart';
 import 'todo_item.dart';
 
 class ToDoScreen extends StatefulWidget {
-  final User user;
-  const ToDoScreen({Key key, this.user}) : super(key: key);
+  final String userId;
+  const ToDoScreen({Key key, this.userId}) : super(key: key);
 
   @override
   _ToDoScreenState createState() {
@@ -45,11 +45,11 @@ class _ToDoScreenState extends State<ToDoScreen> {
   }
 
   Future<void> _connectToFirebase() async {
-    print('Connect to database with user id: ' + widget.user.uid);
-    database = DatabaseService(widget.user.uid);
+    print('Connect to database with user id: ' + widget.userId);
+    database = DatabaseService(widget.userId);
     if (!(await database.checkIfUserExist())) {
       database.setTodo('Erstes ToDo Item', false);
-      print('Neuer User wurde angelegt: ' + widget.user.uid);
+      print('Neuer User wurde angelegt: ' + widget.userId);
     }
   }
 

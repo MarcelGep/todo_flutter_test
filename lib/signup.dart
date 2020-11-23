@@ -68,50 +68,46 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Widget _registerButton() {
+  Widget _submitButton() {
     return ButtonTheme(
       minWidth: MediaQuery.of(context).size.width,
       height: 50.0,
       buttonColor: Colors.orange[600],
       padding: EdgeInsets.symmetric(vertical: 15),
-      child: RaisedButton(
-        onPressed: () async {
-          User user = await context.read<AuthenticationService>()
-              .signUp2(emailController.text, passwordController.text);
-          if (user != null) {
-            Navigator.push(context, MaterialPageRoute(builder: (context) =>
-                ToDoScreen(user: user)));
-          }
-        },
-        child: Text(
-          'Registrieren',
-          style: TextStyle(fontSize: 20, color: Colors.white),
-        ),
-      ),
-    );
-  }
+      child: Builder(
+        builder: (context) => RaisedButton(
+          child: Text(
+            'Registrieren',
+            style: TextStyle(fontSize: 20, color: Colors.white),
+          ),
+          onPressed: () async {
+            String errorMessage;
+            String result = await context.read<AuthenticationService>()
+                .signUp2(emailController.text, passwordController.text);
 
-  Widget _submitButton() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      padding: EdgeInsets.symmetric(vertical: 15),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-                color: Colors.grey.shade200,
-                offset: Offset(2, 4),
-                blurRadius: 5,
-                spreadRadius: 2)
-          ],
-          gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [Color(0xfffbb448), Color(0xfff7892b)])),
-      child: Text(
-        'Register Now',
-        style: TextStyle(fontSize: 20, color: Colors.white),
+            if (result == 'email-already-in-use') errorMessage = "E-Mail wird bereits verwendet!";
+            if (result == 'invalid-email') errorMessage = "Ungültige E-Mail Adresse!";
+            if (result == 'unknown') errorMessage = "Unbekannter Fehler!";
+
+            if (errorMessage != null) {
+              Scaffold.of(context).showSnackBar(SnackBar(
+                  duration: const Duration(seconds: 1),
+                  backgroundColor: Colors.red,
+                  content: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(IconData(0xead6, fontFamily: 'MaterialIcons')),
+                      SizedBox(width: 10),
+                      Text(errorMessage),
+                    ],
+                  )
+              ));
+            } else {
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => ToDoScreen(userId: result)));
+            }
+          }
+        ),
       ),
     );
   }
@@ -212,7 +208,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     SizedBox(
                       height: 20,
                     ),
-                    _registerButton(),
+                    _submitButton(),
                     SizedBox(height: height * .14),
                     _loginAccountLabel(),
                   ],

@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_login/flutter_login.dart';
 
@@ -16,14 +17,14 @@ class AuthenticationService {
     await _firebaseAuth.signOut();
   }
 
-  Future<User> signIn2(String email, String password) async {
+  Future<String> signIn2(String email, String password) async {
     try {
       UserCredential credential = await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
-      return credential.user;
+      return credential.user.uid;
     } on FirebaseAuthException catch (e) {
       print("Sign in error: " + e.code);
-      return null;
+      return e.code;
     }
     // return Future.delayed(loginTime).then((_) async {
     //
@@ -42,14 +43,14 @@ class AuthenticationService {
     });
   }
 
-  Future<User> signUp2(String email, String password) async {
+  Future<String> signUp2(String email, String password) async {
     try {
       UserCredential credential = await _firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
-      return credential.user;
+      return credential.user.uid;
     } on FirebaseAuthException catch (e) {
       print("Sign up error: " + e.code);
-      return null;
+      return e.code;
     }
   }
 

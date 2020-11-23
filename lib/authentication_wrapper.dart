@@ -11,7 +11,7 @@ class AuthenticationWrapper extends StatelessWidget {
     final User firebaseUser = context.watch<User>();
     if (firebaseUser != null) {
       print("Firebase User Email: " + firebaseUser.email);
-      return ToDoScreen(user: firebaseUser);
+      return ToDoScreen(userId: firebaseUser.uid);
     }
     // return LoginScreen();
     return LoginPage();
